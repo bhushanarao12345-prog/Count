@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111827" />
+  <title>Tap Counter</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; min-height: 100%; }
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #111827;
+      color: #f9fafb;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .app { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+    .topbar {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px clamp(16px, 4vw, 28px);
+      background: #0b1220;
+      border-bottom: 1px solid #263244;
+      z-index: 2;
+    }
+    .brand { font-size: 1.05rem; font-weight: 700; letter-spacing: .02em; }
+    .actions { display: flex; gap: 8px; }
+    button {
+      font: inherit;
+      font-weight: 650;
+      border: 1px solid #374151;
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: #f9fafb;
+      background: #1f2937;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    button:active { transform: scale(.97); }
+    button:focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; }
+    #resetBtn { background: #374151; }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      cursor: pointer;
+      touch-action: manipulation;
+      outline: none;
+    }
+    .hint { color: #9ca3af; font-size: .95rem; margin-bottom: 16px; }
+    #count {
+      font-size: clamp(5rem, 25vw, 11rem);
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -.06em;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+    .tap-label { color: #d1d5db; margin-top: 20px; font-size: 1.05rem; }
+    .footer { padding: 14px 20px 20px; text-align: center; color: #6b7280; font-size: .8rem; }
+    @media (max-width: 380px) {
+      .topbar { padding-inline: 12px; }
+      .brand { font-size: .95rem; }
+      button { padding: 9px 10px; font-size: .9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">Tap Counter</div>
+      <nav class="actions" aria-label="Counter controls">
+        <button id="decrementBtn" type="button" aria-label="Decrement counter">− Decrement</button>
+        <button id="resetBtn" type="button" aria-label="Reset counter">Reset</button>
+      </nav>
+    </header>
+
+    <main id="tapArea" role="button" tabindex="0" aria-label="Tap anywhere in this area to increase the count">
+      <div class="hint">TAP ANYWHERE</div>
+      <output id="count" aria-live="polite">0</output>
+      <div class="tap-label">Tap the screen to count</div>
+    </main>
+
+    <div class="footer">Your count stays on this page while it is open.</div>
+  </div>
+
+  <script>
+    (() => {
+      let count = 0;
+      const countOutput = document.getElementById('count');
+      const tapArea = document.getElementById('tapArea');
+      const decrementBtn = document.getElementById('decrementBtn');
+      const resetBtn = document.getElementById('resetBtn');
+
+      function render() {
+        countOutput.textContent = String(count);
+      }
+
+      function increment() {
+        count += 1;
+        render();
+      }
+
+      tapArea.addEventListener('click', increment);
+      tapArea.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          increment();
+        }
+      });
+
+      decrementBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        count = Math.max(0, count - 1);
+        render();
+      });
+
+      resetBtn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        count = 0;
+        render();
+      });
+    })();
+  </script>
+</body>
+</html>
